@@ -7,66 +7,64 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Stateful Test'),
-        ),
-        body: MyWidget(),
-      ),
-    );
+    return MaterialApp(home: MyListWidget());
   }
 }
 
-class MyWidget extends StatefulWidget {
+class MyListWidget extends StatefulWidget {
   State<StatefulWidget> createState() {
-    return _MyWidgetState();
+    return _MyListWidgetState();
   }
 }
 
-class _MyWidgetState extends State<MyWidget> {
-  bool enabled = false;
-  String stateText = "disable";
-
-  void changeCheck() {
+class _MyListWidgetState extends State<MyListWidget> {
+  List<Widget> widgetList = [
+    MyColorItemWidget(
+      Colors.red,
+      key: UniqueKey(),
+    ),
+    MyColorItemWidget(Colors.blue, key: UniqueKey()),
+  ];
+  onChange() {
+    print(widgetList.elementAt(0).key);
     setState(() {
-      if (enabled) {
-        stateText = "disable";
-        enabled = false;
-      } else {
-        stateText = "enable";
-        enabled = true;
-      }
+      widgetList.insert(1, widgetList.removeAt(0));
     });
   }
 
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: (enabled
-                ? Icon(
-                    Icons.check_box,
-                    size: 20,
-                  )
-                : Icon(
-                    Icons.check_box_outline_blank,
-                    size: 20,
-                  )),
-            color: Colors.red,
-            onPressed: changeCheck,
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Key Test'),
+        ),
+        body: Column(children: [
+          Row(
+            children: widgetList,
           ),
-          Container(
-            padding: EdgeInsets.only(left: 16),
-            child: Text(
-              '$stateText',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
+          ElevatedButton(onPressed: onChange, child: Text("toggle"))
+        ]));
+  }
+}
+
+class MyColorItemWidget extends StatefulWidget {
+  Color color;
+  MyColorItemWidget(this.color, {Key? key}) : super(key: key);
+
+  State<StatefulWidget> createState() {
+    return _MyColorItemWidgetState(color);
+  }
+}
+
+class _MyColorItemWidgetState extends State<MyColorItemWidget> {
+  Color color;
+  _MyColorItemWidgetState(this.color);
+
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Container(
+      color: color,
+      width: 150,
+      height: 150,
+    ));
   }
 }
