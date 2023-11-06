@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -18,18 +19,21 @@ class MyListWidget extends StatefulWidget {
 }
 
 class _MyListWidgetState extends State<MyListWidget> {
-  List<Widget> widgetList = [
-    MyColorItemWidget(
-      Colors.red,
-      key: UniqueKey(),
-    ),
-    MyColorItemWidget(Colors.blue, key: UniqueKey()),
-  ];
-  onChange() {
-    print(widgetList.elementAt(0).key);
+  Color color1 = Colors.black;
+  Color color2 = Colors.red;
+  Color color3 = Colors.blue;
+  void onchange() {
     setState(() {
-      widgetList.insert(1, widgetList.removeAt(0));
+      color1 = getRandomcolor();
+      color2 = getRandomcolor();
+      color3 = getRandomcolor();
     });
+  }
+
+  Color getRandomcolor() {
+    return Color(
+      (Random().nextDouble() * 0xFFFFFF).toInt(),
+    ).withOpacity(1.0); //0~0xFFFFFF 사이의 랜덤한 정수 값 생성
   }
 
   Widget build(BuildContext context) {
@@ -38,33 +42,13 @@ class _MyListWidgetState extends State<MyListWidget> {
           title: Text('Key Test'),
         ),
         body: Column(children: [
-          Row(
-            children: widgetList,
-          ),
-          ElevatedButton(onPressed: onChange, child: Text("toggle"))
+          Container(width: double.infinity, height: 200, color: color1),
+          Container(width: double.infinity, height: 200, color: color2),
+          Container(width: double.infinity, height: 200, color: color3),
+          IconButton(
+            onPressed: onchange,
+            icon: const Icon(Icons.refresh),
+          )
         ]));
-  }
-}
-
-class MyColorItemWidget extends StatefulWidget {
-  Color color;
-  MyColorItemWidget(this.color, {Key? key}) : super(key: key);
-
-  State<StatefulWidget> createState() {
-    return _MyColorItemWidgetState(color);
-  }
-}
-
-class _MyColorItemWidgetState extends State<MyColorItemWidget> {
-  Color color;
-  _MyColorItemWidgetState(this.color);
-
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
-      color: color,
-      width: 150,
-      height: 150,
-    ));
   }
 }
